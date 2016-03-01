@@ -141,7 +141,7 @@ while True:
                                         5: 'some say my master caveman is stoopid but master says these are jelly bastards',
                                         6: 'check me am naked here https://github.com/Al-Caveman/albot',
                                         7: 'a dab may do ya! lol',
-                                        8: 'lord caveman is wise he answers every question i can think of',
+                                        8: 'master caveman is wise he answers every question i can think of',
                                         9: 'all irc bots suck (master says), until master decided to make me',
                                         10: 'some say am the beauty of simplicity'}
 
