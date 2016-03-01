@@ -1,3 +1,19 @@
+# albot - the legendary irc bot that is way better than your mom
+# Copyright (C) 2016 caveman <toraboracaveman@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import socket
 import select
 import time
@@ -5,7 +21,7 @@ import sys
 from getpass import getpass
 
 # HI
-sys.stderr.write('hi - welcome to albot; the legandary irc client\n')
+sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
 sys.stderr.write('that is way better than your mom.\n\n')
 sys.stderr.write('licensed under GPLv3, which is described here:\n')
 sys.stderr.write('  https://www.gnu.org/licenses/gpl-3.0.en.html\n\n')
