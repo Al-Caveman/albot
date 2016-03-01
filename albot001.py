@@ -36,7 +36,7 @@ IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass('gimme yer password: ')
-CHANNELS = ['##caveman']
+CHANNELS = ['##caveman', '#gentoo-chat-exile']
 
 # STORAGE OBJECT NAMES
 STORAGE_ROOT = os.path.splitext(os.path.basename(__file__))[0]
