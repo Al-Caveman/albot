@@ -1,4 +1,4 @@
-# albot - the legendary irc bot that is way better than your mom
+# albot - the legendary irc bot that is way better than your mom.
 # Copyright (C) 2016 caveman <toraboracaveman@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,11 +23,9 @@ from getpass import getpass
 # HI
 sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
 sys.stderr.write('that is way better than your mom.\n\n')
-sys.stderr.write('licensed under GPLv3, which is described here:\n')
-sys.stderr.write('  https://www.gnu.org/licenses/gpl-3.0.en.html\n\n')
-
 
 # CONFIG
+VERBOSE = False
 HOST = "irc.freenode.net"
 PORT = 6667
 NICK = "albot"
@@ -42,6 +40,7 @@ CONNECTION_PROBLEM = 1
 COMMAND = 2
 PARAMS = 3
 CR = 4
+INIT_MAYBE = 5
 
 # DISCONNECT
 def disco(s):
@@ -50,8 +49,10 @@ def disco(s):
     state = CONNECTION_PROBLEM
     sys.stderr.write(' ok\n')
 
+# SEND TO IRC SERVER
 def ircsend(s, msg):
-    sys.stderr.write('>>>>>>>:' + msg)
+    if VERBOSE:
+        sys.stderr.write('>>>>>>>:' + msg)
     s.send(msg)
 
 # CONNECT
@@ -73,12 +74,12 @@ while True:
         try:
             ready_read, ready_write, ready_err = select.select([s], [s], [s])
         except select.error:
+            # not sure what to add here. this part needs to be revised.
             break
 
         # read ready
         if len(ready_read) > 0:
             tmp = s.recv(1024)
-            sys.stderr.write('***|'+tmp+'|***\n')
             if (len(tmp) == 0):
                 disco(s)
                 break
@@ -96,8 +97,11 @@ while True:
 
                     elif state == PARAMS: # reading params
                         if c == '\r':
-                            sys.stderr.write('command:' + irc_command + '\n')
-                            sys.stderr.write('  params:' + irc_params + '\n')
+                            if VERBOSE:
+                                sys.stderr.write('command:' + irc_command + '\n')
+                                sys.stderr.write('  params:' + irc_params + '\n')
+                            if irc_command == 'PING':
+                                ircsend(s, 'PONG ' + irc_params + '\r\n')
                             state = CR
                         else:
                             irc_params += c
@@ -106,7 +110,14 @@ while True:
                         if c == '\n':
                             irc_command = ''
                             irc_params = ''
+                            state = INIT_MAYBE
+
+                    elif state == INIT_MAYBE: # anticipating non-prefixed commands
+                        if c == ':':
                             state = INIT_OK
+                        else:
+                            irc_command += c
+                            state = COMMAND
 
         # write ready
         if len(ready_write) > 0:
