@@ -25,7 +25,7 @@ sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
 sys.stderr.write('that is way better than your mom.\n\n')
 
 # CONFIG
-VERBOSE = False
+VERBOSE = True
 HOST = "irc.freenode.net"
 PORT = 6667
 NICK = "albot"
@@ -33,6 +33,7 @@ IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass('gimme yer password: ')
+CHANNELS = ['##caveman']
 
 # STATES
 INIT_OK = 0
@@ -52,7 +53,7 @@ def disco(s):
 # SEND TO IRC SERVER
 def ircsend(s, msg):
     if VERBOSE:
-        sys.stderr.write('>>>>>>>:' + msg)
+        sys.stderr.write('>>>>>>:' + msg)
     s.send(msg)
 
 # CONNECT
@@ -66,6 +67,7 @@ while True:
     ircsend(s, 'USER %s %s bla :%s\r\n' % (IDENT, HOST, REALNAME))
     
     state = INIT_OK
+    irc_prefix = ''
     irc_command = ''
     irc_params = ''
     
@@ -88,6 +90,8 @@ while True:
                     if state == INIT_OK: # start of a new message
                         if c == ' ':
                             state = COMMAND
+                        else:
+                            irc_prefix += c
 
                     elif state == COMMAND: # reading command
                         if c == ' ':
@@ -98,16 +102,33 @@ while True:
                     elif state == PARAMS: # reading params
                         if c == '\r':
                             if VERBOSE:
-                                sys.stderr.write('command:' + irc_command + '\n')
-                                sys.stderr.write('  params:' + irc_params + '\n')
+                                sys.stderr.write('prefix:' + irc_prefix + '\n')
+                                sys.stderr.write('  command:' + irc_command + '\n')
+                                sys.stderr.write('  params :' + irc_params + '\n')
+
+                            #
+                            # bot stuff goes here
+                            #
+                            # do pings
                             if irc_command == 'PING':
                                 ircsend(s, 'PONG ' + irc_params + '\r\n')
+
+                            # join channels only if authenticated and hidden
+                            if irc_command == '396':
+                                for channel in CHANNELS:
+                                    ircsend(s, 'JOIN ' + channel + '\r\n')
+
+                            #
+                            # bot stuff end
+                            #
+
                             state = CR
                         else:
                             irc_params += c
 
                     elif state == CR: # anticipating params end signal
                         if c == '\n':
+                            irc_prefix = ''
                             irc_command = ''
                             irc_params = ''
                             state = INIT_MAYBE
@@ -124,5 +145,5 @@ while True:
             pass
 
     # dead connection, sleep first before retry
-    sys.stderr.write('reconnecting in '+str(RECONNECT_SLEEP)+' seconds..')
+    sys.stderr.write('reconnecting in ' + str(RECONNECT_SLEEP) + ' seconds..')
     time.sleep(RECONNECT_SLEEP)
