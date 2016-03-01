@@ -18,7 +18,9 @@ import socket
 import select
 import time
 import sys
+import re
 from getpass import getpass
+import random
 
 # HI
 sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
@@ -33,7 +35,7 @@ IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass('gimme yer password: ')
-CHANNELS = ['##caveman']
+CHANNELS = ['##caveman', '#gentoo-chat-exile']
 
 # STATES
 INIT_OK = 0
@@ -74,7 +76,7 @@ while True:
     while state != CONNECTION_PROBLEM:
         # wait until connection is ready
         try:
-            ready_read, ready_write, ready_err = select.select([s], [s], [s])
+            ready_read, ready_write, ready_err = select.select([s], [ ], [s])
         except select.error:
             # not sure what to add here. this part needs to be revised.
             break
@@ -118,6 +120,35 @@ while True:
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
 
+                            if irc_command == 'PRIVMSG':
+                                # parse message
+                                irc_prefix_nick = irc_prefix[0:irc_prefix.find('!')]
+                                irc_params_channel = irc_params[0:irc_params.find(' ')]
+                                irc_params_msg = irc_params[irc_params.find(' ')+2:]
+
+                                # did anyone mention albot?
+                                if re.search('(\W|^)' + NICK + '(\W|$)', irc_params_msg):
+                                    albot_mentioned = True
+                                else:
+                                    albot_mentioned = False
+
+                                # respond
+                                if albot_mentioned:
+                                    responses = {1: 'a dab will do ya!',
+                                        2: 'caveman perfected me with the beauty of simplicity. check my guts here: https://github.com/Al-Caveman/albot',
+                                        3: 'am still incomplete dude.. awaiting master caveman to bless me one day',
+                                        4: 'you talkin to me?',
+                                        5: 'some say my master caveman is stoopid but master says these are jelly bastards',
+                                        6: 'check me am naked here https://github.com/Al-Caveman/albot',
+                                        7: 'a dab may do ya! lol',
+                                        8: 'lord caveman is wise he answers every question i can think of',
+                                        9: 'all irc bots suck (master says), until master decided to make me',
+                                        10: 'some say am the beauty of simplicity'}
+
+                                    ircsend(s, 'PRIVMSG '
+                                        + irc_params_channel
+                                        + ' :'+responses[random.randint(1,len(responses))]+'\r\n')
+
                             #
                             # bot stuff end here
                             #
@@ -139,10 +170,6 @@ while True:
                         else:
                             irc_command += c
                             state = COMMAND
-
-        # write ready
-        if len(ready_write) > 0:
-            pass
 
     # dead connection, sleep first before retry
     sys.stderr.write('reconnecting in ' + str(RECONNECT_SLEEP) + ' seconds..')
