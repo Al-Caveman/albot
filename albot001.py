@@ -19,6 +19,9 @@ import select
 import time
 import sys
 from getpass import getpass
+import re
+import hashlib
+import os
 
 # HI
 sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
@@ -32,8 +35,12 @@ NICK = "albot"
 IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
-PASSWORD = getpass('gimme yer password:')
+PASSWORD = getpass('gimme yer password: ')
 CHANNELS = ['##caveman']
+
+# STORAGE OBJECT NAMES
+STORAGE_ROOT = os.path.splitext(os.path.basename(__file__))[0]
+KARMA = 'karma'
 
 # STATES
 INIT_OK = 0
@@ -55,6 +62,37 @@ def ircsend(s, msg):
     if VERBOSE:
         sys.stderr.write('>>>>>>:' + msg)
     s.send(msg)
+
+# GET OBJECT PATH
+def getobjpath(t, o):
+    # sanitify object name
+    o_sane = hashlib.md5(bytes(o)).hexdigest()
+    n = 2
+    return STORAGE_ROOT + '/' + t + '/' + '/'.join([o_sane[i:i+n] for i in range(0,len(o_sane),n)])
+
+# GET OBJECT VALUE
+def getobj(t, o):
+    o_path = getobjpath(t, o)
+    try:
+        with open(o_path, 'r') as f:
+            v = f.read()
+    except:
+        v = None
+    return v
+
+# SET OBJECT VALUE
+def setobj(t, o, v):
+    o_path = getobjpath(t, o)
+    try:
+        os.makedirs(os.path.dirname(o_path))
+    except:
+        pass
+
+    try:
+        with open(o_path, 'w') as f:
+            f.write(bytes(v))
+    except:
+        sys.stderr.write('error: failed to save object "'+o_path+'".\n')
 
 # CONNECT
 while True:
@@ -128,6 +166,44 @@ while True:
                                 if irc_params_msg.find(NICK) == 0:
                                     ircsend(s, 'PRIVMSG ' + irc_params_channel
                                     + ' :' + irc_prefix_nick + ', called me?\r\n')
+
+                                # simple karma bot
+                                # increment karma
+                                if re.search('^[\S]+\+\++', irc_params_msg):
+                                    karma_subject = re.search('^[\S]+\+\+', irc_params_msg).group()[0:-2]
+                                    karma_subject_score = getobj(KARMA, karma_subject)
+                                    if karma_subject_score == None:
+                                        karma_subject_score = 0
+                                    else:
+                                        karma_subject_score = int(karma_subject_score)
+                                    setobj(KARMA, karma_subject, karma_subject_score+1)
+
+                                # decrement karma
+                                if re.search('^[\S]+\-\-+', irc_params_msg):
+                                    karma_subject = re.search('^[\S]+\-\-', irc_params_msg).group()[0:-2]
+                                    karma_subject_score = getobj(KARMA, karma_subject)
+                                    if karma_subject_score == None:
+                                        karma_subject_score = 0
+                                    else:
+                                        karma_subject_score = int(karma_subject_score)
+                                    setobj(KARMA, karma_subject, karma_subject_score-1)
+
+                                # view karma
+                                if re.search('^!karma [\S]+', irc_params_msg):
+                                    karma_subject = re.search('^!karma [\S]+', irc_params_msg).group()[7:]
+                                    karma_subject_score = getobj(KARMA, karma_subject)
+                                    # sharia compliance begin
+                                    if re.search('^(islam|muslims?|muzzies?|allah|mohamm?[ea]d)$',
+                                    karma_subject, re.IGNORECASE):
+                                        karma_subject_score = 'allahuakbar'
+                                    # sharia compliance end
+                                    ircsend(s, 'PRIVMSG '
+                                        + irc_params_channel
+                                        + ' :'
+                                        + str(karma_subject_score)
+                                        + ' is the karma of '
+                                        + karma_subject
+                                        + '.\r\n')
 
                             #
                             # bot stuff end here

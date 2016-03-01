@@ -10,6 +10,9 @@ writing your bot things, then stop when you see '# bot stuff end here'.
 once done, you run it by `python albot.py`. that's it; isn't simplicity
 beautiful?
 
+examples of using albot.py for implementing specific features (e.g. karma) are
+included. these are named albot***.py where *** are numbers.
+
 if you wish to get in touch with me, mail me on toraboracaveman [at] gmail
 [dot] com.
 
