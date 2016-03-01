@@ -165,10 +165,10 @@ while True:
                             state = INIT_MAYBE
 
                     elif state == INIT_MAYBE: # anticipating non-prefixed commands
+                        irc_command += c
                         if c == ':':
                             state = INIT_OK
                         else:
-                            irc_command += c
                             state = COMMAND
 
     # dead connection, sleep first before retry
