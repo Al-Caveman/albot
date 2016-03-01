@@ -4,8 +4,8 @@ decent user interface (no need for ini config formats, fancy interactive cli,
 or -even worse- graphical user interface).
 
 this script is very minimalist and allows you to easily script out your fancy
-irc bot in no time. just search albot.py for '# bot stuff goes here' and start
-writing your bot things, then stop when you see '# bot stuff end'
+irc bot in no time. just search albot.py for '# bot stuff start here' and start
+writing your bot things, then stop when you see '# bot stuff end here'.
 
 if you wish to get in touch with me, mail me on toraboracaveman [at] gmail
 [dot] com.
