@@ -107,7 +107,7 @@ while True:
                                 sys.stderr.write('  params :' + irc_params + '\n')
 
                             #
-                            # bot stuff goes here
+                            # bot stuff start here
                             #
                             # do pings
                             if irc_command == 'PING':
@@ -119,7 +119,7 @@ while True:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
 
                             #
-                            # bot stuff end
+                            # bot stuff end here
                             #
 
                             state = CR
