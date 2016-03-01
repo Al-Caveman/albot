@@ -7,6 +7,9 @@ this script is very minimalist and allows you to easily script out your fancy
 irc bot in no time. just search albot.py for '# bot stuff start here' and start
 writing your bot things, then stop when you see '# bot stuff end here'.
 
+once done, you run it by `python albot.py`. that's it; isn't simplicity
+beautiful?
+
 if you wish to get in touch with me, mail me on toraboracaveman [at] gmail
 [dot] com.
 
