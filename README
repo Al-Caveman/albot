@@ -11,7 +11,9 @@ once done, you run it by `python albot.py`. that's it; isn't simplicity
 beautiful?
 
 examples of using albot.py for implementing specific features (e.g. karma) are
-included. these are named albot***.py where *** are numbers.
+included. these are named albot***.py where *** are numbers. namely:
+    - albot001.py: only counts karma points, and responds to you only if you
+      address it directly (by saying "you talkin to me?").
 
 if you wish to get in touch with me, mail me on toraboracaveman [at] gmail
 [dot] com.
