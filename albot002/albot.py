@@ -20,7 +20,7 @@ import time
 import sys
 import getpass
 import random
-import thread
+import threading
 
 # HI
 sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
@@ -35,7 +35,7 @@ NICK = "albot"
 IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
-PASSWORD = input('gimme yer password:')
+PASSWORD = getpass.getpass('gimme yer password:')
 CHANNELS = ['##cavemanlol']
 
 # IRC STATES
@@ -77,39 +77,44 @@ def notice(msg):
         sys.stderr.write('>>>>>>:' + msg)
         sys.stderr.flush()
 
-# RETALIATION THREAD
-def retaliate(s, channel):
-    # global vars
-    global SLEEP
-    global RETALIATING
+class Retaliation (threading.Thread):
+    def __init__(self, s, channel):
+        self.s = s
+        self.channel = channel
 
-    # ui
-    notice('retliation thread started. channel: %s, violation time: %s, current time: %s, sleep: %s --- %s\n'
-    % (channel, TIME_LAST_SHIT, time.time(), SLEEP, TOPICS_CLEAN))
+    def run(self):
+        # global vars
+        global SLEEP
+        global RETALIATING
 
-    # reset sleep if its too large
-    if SLEEP > 300:
-        SLEEP = 1
+        # ui
+        notice('retliation thread started. channel: %s, violation time: %s, current time: %s, sleep: %s --- %s\n'
+        % (self.channel, TIME_LAST_SHIT, time.time(), SLEEP, TOPICS_CLEAN))
 
-    # sleep if needed
-    while time.time() < (TIME_LAST_SHIT + SLEEP):
-        time.sleep(1)
+        # reset sleep if its too large
+        if SLEEP > 300:
+            SLEEP = 1
 
-    # identify new topic
-    if channel in TOPICS_CLEAN:
-        msg = TOPICS_CLEAN[channel]
-    else:
-        msg = '-'
+        # sleep if needed
+        while time.time() < (TIME_LAST_SHIT + SLEEP):
+            time.sleep(1)
 
-    # perform retaliation
-    ircsend(s, 'TOPIC' + ' ' + channel + ' ' + msg + '\r\n')
+        # identify new topic
+        if self.channel in TOPICS_CLEAN:
+            msg = TOPICS_CLEAN[self.channel]
+        else:
+            msg = '-'
 
-    # house keeping
-    SLEEP = SLEEP * 1.5
-    RETALIATING = False
+        # perform retaliation
+        ircsend(self.s, 'TOPIC' + ' ' + self.channel + ' ' + msg + '\r\n')
 
-    # ui
-    notice('retliation thread exitting..\n')
+        # house keeping
+        SLEEP = SLEEP * 1.5
+        RETALIATING = False
+
+        # ui
+        notice('retliation thread exitting..\n')
+
 
 # CONNECT
 while True:
@@ -223,8 +228,9 @@ while True:
                                     # inqueue for retaliation and set delay
                                     TIME_LAST_SHIT = time.time()
                                     if RETALIATING == False:
+                                        retaliate = Retaliation(s, channel)
+                                        retaliate.start()
                                         RETALIATING = True
-                                        thread.start_new_thread(retaliate, (s, channel))
 
                             #
                             # bot stuff end here

@@ -43,13 +43,6 @@ PARAMS = 3
 CR = 4
 INIT_MAYBE = 5
 
-# DISCONNECT
-def disco(s):
-    sys.stderr.write('error: connection error. disconnecting..')
-    s.close()
-    state = CONNECTION_PROBLEM
-    sys.stderr.write(' ok\n')
-
 # SEND TO IRC SERVER
 def ircsend(s, msg):
     if VERBOSE:
@@ -83,8 +76,10 @@ while True:
         if len(ready_read) > 0:
             tmp = s.recv(1024)
             if (len(tmp) == 0):
-                disco(s)
-                break
+                sys.stderr.write('error: connection problem. disconnecting.. ')
+                s.close()
+                sys.stderr.write('ok\n')
+                state = CONNECTION_PROBLEM
             else:
                 for c in tmp:
                     if state == INIT_OK: # start of a new message
