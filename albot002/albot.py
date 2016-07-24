@@ -21,6 +21,7 @@ import sys
 import getpass
 import random
 import threading
+import re
 
 # HI
 sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
@@ -49,7 +50,9 @@ INIT_MAYBE = 5
 # BOT STATES
 HOLYNICKS = ['caveman', 'al-caveman', 'alcaveman', 'mahmoud', 'allah',
 'muslim', 'islam', 'islam']
-SHITNICKS = ['corvus', 'mom', 'af04fb9290474265', 'wolf', 'wiktor']
+SHITNICKS = {'corvus':1, 'mom':1, 'af04fb9290474265':1, 'wolf':1, 'wiktor':1,
+'lambert':1, 'subzero':1, 'distantstar':1, 'star':1, 'root':1,
+'2a02:2698:7022:5662:922b:34ff':1}
 TOPICS_CLEAN = {}
 TIME_LAST_SHIT = 0
 SLEEP = 1
@@ -167,7 +170,7 @@ while True:
 
         # read ready
         if len(ready_read) > 0:
-            tmp = str(s.recv(1024), 'ascii')
+            tmp = str(s.recv(1024), 'ascii', errors='replace')
             if (len(tmp) == 0):
                 disco(s)
                 break
@@ -232,17 +235,32 @@ while True:
 
                             # update TOPICS_CLEAN if clean, else purify
                             if irc_command == 'TOPIC':
-                                irc_prefix_nick = irc_prefix[0:irc_prefix.find('!')]
+                                x = re.findall("^(.*?)!~(.*?)@(.*)$", irc_prefix)
+
                                 irc_params_ps = irc_params.split(' ')
                                 channel = irc_params_ps[0]
                                 topic = ' '.join(irc_params_ps[1:])
                                 is_pure = True
-                                for shitnick in SHITNICKS:
+                                stuff = []
+                                for shitnick in SHITNICKS.keys():
                                     if irc_prefix.lower().find(shitnick) >= 0:
                                         is_pure = False
+                                        if len(x):
+                                            ass_nick,ass_user,ass_host = x[0]
+                                            stuff.append(ass_nick.lower())
+                                            stuff.append(ass_user.lower())
+                                            if re.search('^[0-9a-z:]+$', ass_host.lower()) != None:
+                                                stuff.append(ass_host[0:-10].lower())
+                                            elif re.search('^[0-9\.]+$', ass_host.lower()):
+                                                stuff.append(ass_host[0:-3].lower())
+                                            else:
+                                                stuff.append(ass_host.lower())
+                                for k in stuff:
+                                    SHITNICKS[k] = 1
+                                del(stuff)
                                 for holynick in HOLYNICKS:
                                     if topic.lower().find(holynick) >= 0:
-                                        topic = topic.replace(holynick, irc_prefix_nick)
+                                        topic = topic.replace(holynick, ass_nick)
                                         is_pure = False
 
                                 if is_pure: # pure case
