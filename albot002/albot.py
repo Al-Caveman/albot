@@ -47,8 +47,9 @@ CR = 4
 INIT_MAYBE = 5
 
 # BOT STATES
-HOLYNICKS = ['caveman', 'al-caveman', 'alcaveman', 'mahmoud']
-SHITNICKS = ['corvus', 'mom']
+HOLYNICKS = ['caveman', 'al-caveman', 'alcaveman', 'mahmoud', 'allah',
+'muslim', 'islam', 'islam']
+SHITNICKS = ['corvus', 'mom', 'af04fb9290474265', 'wolf', 'wiktor']
 TOPICS_CLEAN = {}
 TIME_LAST_SHIT = 0
 SLEEP = 1
@@ -203,8 +204,8 @@ while True:
                             if irc_command == '396':
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
-                                    ircsend(s, 'PRIVMSG ' + channel + ' :' +
-                                    'hi - surgical topic sanction on Corvus` is active\r\n')
+                                    #ircsend(s, 'PRIVMSG ' + channel + ' :' +
+                                    #'hi - surgical topic sanction on Corvus` is active\r\n')
     
 
                             if irc_command == 'PRIVMSG':
@@ -226,12 +227,12 @@ while True:
                                 # protect holy nicks
                                 for holynick in HOLYNICKS:
                                     if topic.lower().find(holynick) >= 0:
-                                        topic = topic.replace(holynick, 'Corvus`')
-
+                                        topic = topic.replace(holynick, 'wiktor_b')
                                 TOPICS_CLEAN[irc_params_ps[1]] = topic
 
                             # update TOPICS_CLEAN if clean, else purify
                             if irc_command == 'TOPIC':
+                                irc_prefix_nick = irc_prefix[0:irc_prefix.find('!')]
                                 irc_params_ps = irc_params.split(' ')
                                 channel = irc_params_ps[0]
                                 topic = ' '.join(irc_params_ps[1:])
@@ -241,7 +242,7 @@ while True:
                                         is_pure = False
                                 for holynick in HOLYNICKS:
                                     if topic.lower().find(holynick) >= 0:
-                                        topic = topic.replace(holynick, 'Corvus`')
+                                        topic = topic.replace(holynick, irc_prefix_nick)
                                         is_pure = False
 
                                 if is_pure: # pure case
