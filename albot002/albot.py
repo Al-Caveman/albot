@@ -36,7 +36,7 @@ IDENT = "albot"
 REALNAME = "albot"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass.getpass('gimme yer password:')
-CHANNELS = ['##cavemanlol']
+CHANNELS = ['#gentoo-chat-exile']
 
 # IRC STATES
 INIT_OK = 0
@@ -52,7 +52,7 @@ SHITNICKS = ['corvus', 'mom']
 TOPICS_CLEAN = {}
 TIME_LAST_SHIT = 0
 SLEEP = 1
-RETALIATING = False
+RETALIATING = {}
     
 
 # DISCONNECT
@@ -69,7 +69,7 @@ def ircsend(s, msg):
     if VERBOSE:
         sys.stderr.write('>>>>>>:' + msg)
         sys.stderr.flush()
-    s.send(msg)
+    s.send(msg.encode('ascii'))
 
 # SEND NOTICES TO STDERR
 def notice(msg):
@@ -79,6 +79,7 @@ def notice(msg):
 
 class Retaliation (threading.Thread):
     def __init__(self, s, channel):
+        threading.Thread.__init__(self)
         self.s = s
         self.channel = channel
 
@@ -110,10 +111,32 @@ class Retaliation (threading.Thread):
 
         # house keeping
         SLEEP = SLEEP * 1.5
-        RETALIATING = False
+        del(RETALIATING[self.channel])
 
         # ui
         notice('retliation thread exitting..\n')
+
+# sleep cooler
+class Sleepcooler (threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        # global vars
+        while True:
+            global SLEEP
+
+            time.sleep(15)
+            
+            SLEEP = SLEEP - 1.5
+
+            if SLEEP <= 0:
+                SLEEP = 1
+
+            notice('SEEP--. SLEEP now = %s\n' % SLEEP)
+
+sleeper = Sleepcooler()
+sleeper.start()
 
 
 # CONNECT
@@ -143,7 +166,7 @@ while True:
 
         # read ready
         if len(ready_read) > 0:
-            tmp = s.recv(1024)
+            tmp = str(s.recv(1024), 'ascii')
             if (len(tmp) == 0):
                 disco(s)
                 break
@@ -181,7 +204,7 @@ while True:
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
                                     ircsend(s, 'PRIVMSG ' + channel + ' :' +
-                                    'hi - anti-Corvus` surgical topic defecation is armed\r\n')
+                                    'hi - surgical topic sanction on Corvus` is active\r\n')
     
 
                             if irc_command == 'PRIVMSG':
@@ -227,10 +250,11 @@ while True:
                                 else: # deficated case
                                     # inqueue for retaliation and set delay
                                     TIME_LAST_SHIT = time.time()
-                                    if RETALIATING == False:
+                                    if channel not in RETALIATING:
+                                        notice('retaliating..')
                                         retaliate = Retaliation(s, channel)
                                         retaliate.start()
-                                        RETALIATING = True
+                                        RETALIATING[channel] = True
 
                             #
                             # bot stuff end here
