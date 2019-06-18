@@ -109,8 +109,9 @@ while True:
                                 ircsend(s, 'PONG ' + irc_params + '\r\n')
 
                             # join channels
-                            for channel in CHANNELS:
-                                ircsend(s, 'JOIN ' + channel + '\r\n')
+                            if irc_command == 'VERSION':
+                                for channel in CHANNELS:
+                                    ircsend(s, 'JOIN ' + channel + '\r\n')
 
                             if irc_command == 'PRIVMSG':
                                 # parse message
