@@ -108,10 +108,9 @@ while True:
                             if irc_command == 'PING':
                                 ircsend(s, 'PONG ' + irc_params + '\r\n')
 
-                            # join channels only if authenticated and hidden
-                            if irc_command == '396':
-                                for channel in CHANNELS:
-                                    ircsend(s, 'JOIN ' + channel + '\r\n')
+                            # join channels
+                            for channel in CHANNELS:
+                                ircsend(s, 'JOIN ' + channel + '\r\n')
 
                             if irc_command == 'PRIVMSG':
                                 # parse message
