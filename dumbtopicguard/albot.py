@@ -47,7 +47,7 @@ INIT_MAYBE = 5
 def ircsend(s, msg):
     if VERBOSE:
         sys.stderr.write('>>>>>>:' + msg)
-    s.send(msg)
+    s.send(msg.encode('utf8'))
 
 # CONNECT
 while True:
