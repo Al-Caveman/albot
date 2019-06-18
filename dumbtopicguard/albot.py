@@ -74,7 +74,7 @@ while True:
 
         # read ready
         if len(ready_read) > 0:
-            tmp = s.recv(1024)
+            tmp = s.recv(1024).decode('utf8')
             if (len(tmp) == 0):
                 sys.stderr.write('error: connection problem. disconnecting.. ')
                 s.close()
