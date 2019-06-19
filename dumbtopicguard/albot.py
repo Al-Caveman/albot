@@ -119,8 +119,6 @@ while True:
                                 irc_params_channel = irc_params[0:irc_params.find(' ')]
                                 irc_params_msg = irc_params[irc_params.find(' ')+2:]
 
-                                print(irc_params_msg)
-
                                 # did anyone address albot?
                                 if irc_params_msg.find(NICK) == 0:
                                     ircsend(s, 'PRIVMSG {} :{}, called me?\r\n'.format(
