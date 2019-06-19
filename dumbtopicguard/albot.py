@@ -127,6 +127,13 @@ while True:
                                     ircsend(s, 'PRIVMSG {} :{}, called me?\r\n'.format(
                                         irc_params_channel, irc_prefix_nick
                                     ))
+                            elif irc_command == 'TOPIC':
+                                # parse message
+                                irc_params_channel = irc_params[0:irc_params.find(' ')]
+                                if irc_prefix != 'caveman!~caveman@cave.mn':
+                                    ircsend(s, 'TOPIC {} :no.\r\n'.format(
+                                        irc_params_channel
+                                    ))
 
                             #
                             # bot stuff end here
