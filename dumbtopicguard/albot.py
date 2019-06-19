@@ -109,7 +109,7 @@ while True:
                                 ircsend(s, 'PONG ' + irc_params + '\r\n')
 
                             # join channels
-                            if irc_command == 'VERSION':
+                            if irc_params.find('VERSION') != -1:
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
 
