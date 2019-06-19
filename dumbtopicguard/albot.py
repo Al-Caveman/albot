@@ -112,6 +112,12 @@ while True:
                             if irc_params.find('VERSION') != -1:
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
+                                    ircsend(s, 'PRIVMSG {} :(╯°□°)╯︵ ┻━┻\r\n'.format(
+                                        irc_params_channel
+                                    ))
+                                    ircsend(s, 'PRIVMSG {} :besmillah, engaged.\r\n'.format(
+                                        irc_params_channel
+                                    ))
 
                             if irc_command == 'PRIVMSG':
                                 # parse message
