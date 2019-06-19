@@ -28,9 +28,9 @@ sys.stderr.write('that is way better than your mom.\n\n')
 VERBOSE = True
 HOST = "irc.freenode.net"
 PORT = 6667
-NICK = "albot"
-IDENT = "albot"
-REALNAME = "albot"
+NICK = "altobic"
+IDENT = "altobic"
+REALNAME = "altobic"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass('gimme yer password:')
 CHANNELS = ['##caveman']
