@@ -112,10 +112,7 @@ while True:
                             if irc_params.find('VERSION') != -1:
                                 for channel in CHANNELS:
                                     ircsend(s, 'JOIN ' + channel + '\r\n')
-                                    ircsend(s, 'PRIVMSG {} :(╯°□°)╯︵ ┻━┻\r\n'.format(
-                                        channel
-                                    ))
-                                    ircsend(s, 'PRIVMSG {} :besmillah, engaged.\r\n'.format(
+                                    ircsend(s, 'PRIVMSG {} :k.  besmillah.\r\n'.format(
                                         channel
                                     ))
 
