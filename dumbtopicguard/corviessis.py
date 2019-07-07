@@ -25,15 +25,15 @@ sys.stderr.write('hi - welcome to albot; the legandary irc bot\n')
 sys.stderr.write('that is way better than your mom.\n\n')
 
 # CONFIG
-VERBOSE = True
-HOST = "irc.freenode.net"
+VERBOSE = False
+HOST = "kornbluth.freenode.net"
 PORT = 6667
-NICK = "altobic"
-IDENT = "altobic"
-REALNAME = "altobic"
+NICK = "corviessis"
+IDENT = "corviessis"
+REALNAME = "corvie's sis"
 RECONNECT_SLEEP = 5
 PASSWORD = getpass('gimme yer password:')
-CHANNELS = ['##caveman']
+CHANNELS = ['##anarchy']
 
 # STATES
 INIT_OK = 0
@@ -133,8 +133,11 @@ while True:
                                 if (
                                     irc_prefix != 'caveman!~caveman@cave.mn'
                                     and irc_prefix != 'altobic!~altobic@cave.mn'
+                                    and irc_prefix != 'corviesmom!~corviesmom@cave.mn'
+                                    and irc_prefix != 'corviesdad!~corviesdad@cave.mn'
+                                    and irc_prefix != 'corviessis!~corviessis@cave.mn'
                                 ):
-                                    ircsend(s, 'TOPIC {} :no.\r\n'.format(
+                                    ircsend(s, 'TOPIC {} :islam is the best framework.  communism/putin sucks.  20% of russians are muslims.\r\n'.format(
                                         irc_params_channel
                                     ))
 
